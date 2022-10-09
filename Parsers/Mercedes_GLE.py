@@ -1,9 +1,13 @@
+import csv
 import random
 import time
 from bs4 import BeautifulSoup
 import requests
 from fake_useragent import UserAgent
 import json
+
+cours_USD = float(input("Введите курс доллара к российскому рублю: ").replace(",", "."))
+cours_BYN = float(input("Введите курс белорусского рубля к российскому рублю: ").replace(",", "."))
 
 url = "https://auto.ru/cars/mercedes/gle_klasse_coupe_amg/all/"
 user = UserAgent().random
@@ -33,9 +37,11 @@ for i in range(1, 5):
 
     for car in all_cars:
 
-        car_link = car.find("div", class_="ListingItem__summary").find("a", class_="Link ListingItemTitle__link").get("href")
+        car_link = car.find("div", class_="ListingItem__summary").find("a", class_="Link ListingItemTitle__link").get(
+            "href")
         car_name = car.find("div", class_="ListingItem__summary").find("a", class_="Link ListingItemTitle__link").text
-        params_auto = car.find("div", class_="ListingItem__summary").find_all("div", class_="ListingItemTechSummaryDesktop__cell")
+        params_auto = car.find("div", class_="ListingItem__summary").find_all("div",
+                                                                              class_="ListingItemTechSummaryDesktop__cell")
         try:
             engine = params_auto[0].text
         except Exception:
@@ -68,8 +74,23 @@ for i in range(1, 5):
 
         try:
             price_RUB = car.find("div", class_="ListingItemPrice__content").find("span").text
+            int_price_RUB = int(price_RUB.replace(' ', '').strip('₽'))
+            total_price_RUB = f"{int_price_RUB:,} RUB"
         except Exception:
-            price_RUB = "No price"
+            int_price_RUB = "No price"
+            total_price_RUB = "No price"
+
+        try:
+            price_USD = int(int_price_RUB / cours_USD)
+            total_price_USD = f"{price_USD:,} $"
+        except Exception:
+            total_price_USD = "No price"
+
+        try:
+            price_BYN = int(int_price_RUB / cours_BYN)
+            total_price_BYN = f"{price_BYN:,} BYN"
+        except Exception:
+            total_price_BYN = "No price"
 
         cars_data_list.append(
             {
@@ -81,17 +102,23 @@ for i in range(1, 5):
                 "Привод": drive,
                 "Год выпуска": year,
                 "Пробег": odometer.replace(" ", ","),
-                "Цена в российских рублях": price_RUB.replace(" ", ",")
+                "Цена в российских рублях": total_price_RUB,
+                "Цена в долларах": total_price_USD,
+                "Цена в белорусских рублях": total_price_BYN
             }
         )
 
     iteration_count -= 1
     print(f"Итерация № {i} завершена. Осталось {iteration_count} итераций")
-    if iteration_count == 0:
-        print("Сбор данных завершен")
 
     time.sleep(random.randrange(2, 4))
+
 
 with open("cars.json", "a", encoding="utf-8") as file:
     json.dump(cars_data_list, file, indent=4, ensure_ascii=False)
 
+with open("cars.csv", "a", encoding="utf-8", newline="") as file2:
+    keys = cars_data_list[0].keys()
+    writer = csv.DictWriter(file2, keys)
+    writer.writeheader()
+    writer.writerows(cars_data_list)
