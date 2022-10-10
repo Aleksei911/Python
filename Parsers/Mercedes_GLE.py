@@ -27,7 +27,7 @@ cars_data_list = []
 
 iteration_count = 5
 
-for i in range(1, 5):
+for i in range(1, 6):
 
     req = requests.get(url + f"?page={i}", headers=header).content.decode("utf-8")
 
@@ -35,90 +35,122 @@ for i in range(1, 5):
 
     all_cars = soup.find_all("div", class_="ListingItem")
 
+    car_urls = []
     for car in all_cars:
+        car_url = car.find("div", class_="ListingItem__summary").find("a").get("href")
+        car_urls.append(car_url)
 
-        car_link = car.find("div", class_="ListingItem__summary").find("a", class_="Link ListingItemTitle__link").get(
-            "href")
-        car_name = car.find("div", class_="ListingItem__summary").find("a", class_="Link ListingItemTitle__link").text
-        params_auto = car.find("div", class_="ListingItem__summary").find_all("div",
-                                                                              class_="ListingItemTechSummaryDesktop__cell")
-        try:
-            engine = params_auto[0].text
-        except Exception:
-            engine = "No date for the engine"
+    for link in car_urls:
+        car_req = requests.get(link, headers=header).content.decode("utf-8")
+
+        car_page = BeautifulSoup(car_req, "lxml")
 
         try:
-            transmission = params_auto[1].text
+            car_name = car_page.find("div", class_="CardHead__topRow").find("h1", class_="CardHead__title").text
         except Exception:
-            transmission = "No date for the transmission"
+            car_name = "information not found"
 
         try:
-            car_type = params_auto[2].text
+            price = car_page.find("div", class_="CardHead__topRow").find("span",
+                                                                         class_="OfferPriceCaption__price").text.replace(
+                " ", "").strip("₽")
         except Exception:
-            car_type = "No date for the car_type"
+            price = "information not found"
+
+        car_info = car_page.find("div", class_="CardOfferBody__leftColumn")
 
         try:
-            drive = params_auto[3].text
+            year = car_info.find("li", class_="CardInfoRow CardInfoRow_year").find_all("span")
+            year_value = year[1].text
         except Exception:
-            drive = "No date for the drive"
+            year_value = "information not found"
 
         try:
-            year = car.find("div", class_="ListingItem__year").text
+            odometer = car_info.find("li", class_="CardInfoRow CardInfoRow_kmAge").find_all("span")
+            odometer_value = odometer[1].text.replace(" ", " ")
         except Exception:
-            year = "No year"
+            odometer_value = "information not found"
 
         try:
-            odometer = car.find("div", class_="ListingItem__kmAge").text
+            car_type = car_info.find("li", class_="CardInfoRow CardInfoRow_bodytype").find_all("span")
+            car_type_value = car_type[1].text
         except Exception:
-            odometer = "No odometr"
+            car_type_value = "information not found"
 
         try:
-            price_RUB = car.find("div", class_="ListingItemPrice__content").find("span").text
-            int_price_RUB = int(price_RUB.replace(' ', '').strip('₽'))
-            total_price_RUB = f"{int_price_RUB:,} RUB"
+            color = car_info.find("li", class_="CardInfoRow CardInfoRow_color").find_all("span")
+            color_value = color[1].text
         except Exception:
-            int_price_RUB = "No price"
-            total_price_RUB = "No price"
+            color_value = "information not found"
 
         try:
-            price_USD = int(int_price_RUB / cours_USD)
-            total_price_USD = f"{price_USD:,} $"
+            engine = car_info.find("li", class_="CardInfoRow CardInfoRow_engine").find_all("span")
+            engine_value = engine[1].text.replace(" ", " ")
         except Exception:
-            total_price_USD = "No price"
+            engine_value = "information not found"
 
         try:
-            price_BYN = int(int_price_RUB / cours_BYN)
-            total_price_BYN = f"{price_BYN:,} BYN"
+            transmission = car_info.find("li", class_="CardInfoRow CardInfoRow_transmission").find_all("span")
+            transmission_value = transmission[1].text
         except Exception:
-            total_price_BYN = "No price"
+            transmission_value = "information not found"
+
+        try:
+            drive = car_info.find("li", class_="CardInfoRow CardInfoRow_drive").find_all("span")
+            drive_value = drive[1].text
+        except Exception:
+            drive_value = "information not found"
+
+        try:
+            condition = car_info.find("li", class_="CardInfoRow CardInfoRow_state").find_all("span")
+            condition_value = condition[1].text
+        except Exception:
+            condition_value = "information not found"
+
+        try:
+            price_RUB = f"{int(price):,}"
+        except Exception:
+            price_RUB = "information not found"
+
+        try:
+            price_BYN = f"{int(int(price) / cours_BYN):,}"
+        except Exception:
+            price_BYN = "information not found"
+
+        try:
+            price_USD = f"{int(int(price) / cours_USD):,}"
+        except Exception:
+            price_USD = "information not found"
 
         cars_data_list.append(
             {
-                "Ссылка на авто": car_link,
+                "Ссылка на авто": link,
                 "Название авто": car_name,
-                "Тип двигателя": engine.replace(" ", "").replace(" ", ""),
-                "Трансмиссия": transmission,
-                "Тип авто": car_type,
-                "Привод": drive,
-                "Год выпуска": year,
-                "Пробег": odometer.replace(" ", ","),
-                "Цена в российских рублях": total_price_RUB,
-                "Цена в долларах": total_price_USD,
-                "Цена в белорусских рублях": total_price_BYN
+                "Год выпуска": year_value,
+                "Пробег": odometer_value,
+                "Кузов": car_type_value,
+                "Цвет": color_value,
+                "Двигатель": engine_value,
+                "Коробка": transmission_value,
+                "Привод": drive_value,
+                "Состояние": condition_value,
+                "Цена в российских рублях": price_RUB,
+                "Цена в белорусских рублях": price_BYN,
+                "Цена в долларах": price_USD
             }
         )
 
-    iteration_count -= 1
-    print(f"Итерация № {i} завершена. Осталось {iteration_count} итераций")
+    time.sleep(random.randrange(1, 3))
 
-    time.sleep(random.randrange(2, 4))
+print(len(cars_data_list))
 
+sorted_cars_data_list = sorted(cars_data_list, key=lambda x: x["Цена в долларах"])
 
-with open("cars.json", "a", encoding="utf-8") as file:
-    json.dump(cars_data_list, file, indent=4, ensure_ascii=False)
+with open("cars.json", "w", encoding="utf-8") as file:
+    json.dump(sorted_cars_data_list, file, indent=4, ensure_ascii=False)
 
-with open("cars.csv", "a", encoding="utf-8", newline="") as file2:
-    keys = cars_data_list[0].keys()
-    writer = csv.DictWriter(file2, keys)
+with open("cars.csv", "w", encoding="cp1251", newline="") as file2:
+    keys = sorted_cars_data_list[0].keys()
+    writer = csv.DictWriter(file2, keys, delimiter=";")
     writer.writeheader()
-    writer.writerows(cars_data_list)
+    writer.writerows(sorted_cars_data_list)
