@@ -87,3 +87,16 @@ else:
             print('Ваша матрица является магическим квадратом!')
         else:
             print('Ваша матрица не является магическим кварратом!')
+
+
+# DZ
+
+def sort_func(array: list):
+    total = map(lambda x: int(x) if x.isdigit() else x, array)
+    return sorted(total, key=lambda x: (isinstance(x, int),
+                                        len(x) if isinstance(x, str) else x,
+                                        x.lower() if isinstance(x, str) else x))
+
+
+user_input = input('Введите слова и числа через пробел: ').split()
+print(sort_func(user_input))
