@@ -1,0 +1,12 @@
+{
+    "id": 765,
+    "email": "ivanov@mail.ru",
+    "surname": "\u0418\u0432\u0430\u043d\u043e\u0432",
+    "age": 45,
+    "admin": false,
+    "friends": [
+        123,
+        456,
+        789
+    ]
+}
