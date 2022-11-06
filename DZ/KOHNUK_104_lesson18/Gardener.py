@@ -1,9 +1,8 @@
 from DZ.KOHNUK_104_lesson18.TomatoBush import TomatoBush
 
 
-class Gardener(TomatoBush):
-    def __init__(self, name: str, plant: TomatoBush, num: int):
-        TomatoBush.__init__(self, num=num)
+class Gardener:
+    def __init__(self, name: str, plant: TomatoBush):
         self.name = name
         self._plant = plant
 
@@ -25,7 +24,7 @@ class Gardener(TomatoBush):
 if __name__ == '__main__':
     Gardener.knowledge_base()
     tom = TomatoBush(1)
-    gar = Gardener('Vasya', tom, 1)
+    gar = Gardener('Vasya', tom)
     gar.work()
     gar.harvest()
     gar.work()
