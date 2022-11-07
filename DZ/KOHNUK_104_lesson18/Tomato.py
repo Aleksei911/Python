@@ -7,14 +7,12 @@ class Tomato:
 
     def __init__(self, index: int):
         self._index = index
-        self.key = 1
-        self._state = Tomato.states[self.key]
+        self._state = 1
 
     def grow(self):
-        if self.key != 5:
-            self.key += 1
-            self._state = Tomato.states[self.key]
-            print(self._state)
+        if self._state != 5:
+            self._state += 1
+            print(Tomato.states[self._state])
 
     def is_ripe(self) -> bool:
-        return self._state == 'готово'
+        return self._state == 5

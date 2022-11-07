@@ -23,15 +23,8 @@ class Gardener:
 
 if __name__ == '__main__':
     Gardener.knowledge_base()
-    tom = TomatoBush(1)
+    tom = TomatoBush(1, 5)
     gar = Gardener('Vasya', tom)
-    gar.work()
-    gar.harvest()
-    gar.work()
-    gar.harvest()
-    gar.work()
-    gar.work()
-    gar.harvest()
     gar.work()
     gar.harvest()
     gar.work()
