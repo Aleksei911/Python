@@ -1,0 +1,11 @@
+__main__ 2022-11-09 15:33:27,076 INFO Starting  the logger for module __main__...
+__main__ 2022-11-09 15:33:27,076 INFO Calling the delitel function by passing arguments (10, 2) to it
+__main__ 2022-11-09 15:33:27,076 INFO the result of the function is 5.0
+__main__ 2022-11-09 15:33:27,076 INFO Calling the delitel function by passing arguments (4, 0) to it
+__main__ 2022-11-09 15:33:27,076 ERROR ZeroDivisionError
+Traceback (most recent call last):
+  File "C:\Users\Алексей\PycharmProjects\My_It_School\DZ\KOHNUK_104_lesson19\KOHNUK_104_lesson19.py", line 24, in wrapper
+    result = func(*args, **kwargs)
+  File "C:\Users\Алексей\PycharmProjects\My_It_School\DZ\KOHNUK_104_lesson19\KOHNUK_104_lesson19.py", line 35, in delitel
+    return a / b
+ZeroDivisionError: division by zero
