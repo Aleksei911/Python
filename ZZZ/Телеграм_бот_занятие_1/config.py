@@ -1,1 +1,1 @@
-TOKEN = r'5458646899:AAH9TsV2ELKAwsNJgFd7rjLgjtOtOWGaTKU'
+TOKEN = r'chjchj'
