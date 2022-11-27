@@ -1,4 +1,4 @@
 # токен авторизации
-TOKEN = r'5458646899:AAH9TsV2ELKAwsNJgFd7rjLgjtOtOWGaTKU'
+TOKEN = r'jhkkvhv'
 # токен администратора
-ADMIN_ID = 744343361
+ADMIN_ID = 6543645
